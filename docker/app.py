@@ -242,18 +242,6 @@ async def file_parse(
                         content={"error": f"Failed to convert Office/document: {file.filename}"},
                         status_code=500,
                     )
-
-                # ========== 新增路径安全校验 ==========
-                base_temp_dir = Path(temp_dir).resolve()
-                convert_file_path = Path(convert_file_path).resolve()
-                # 防止路径穿越
-                if not convert_file_path.is_relative_to(base_temp_dir):
-                    return JSONResponse(
-                        content={"error": "Path traversal attack detected"},
-                        status_code=400,
-                    )
-                # =====================================
-
                 # 从磁盘读字节
                 with open(convert_file_path, "rb") as f:
                     content = f.read()
