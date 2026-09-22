@@ -228,7 +228,7 @@ async def file_parse(
                 # 创建临时目录用于文档转换
                 temp_dir = tempfile.mkdtemp(prefix="fastapi_adapter_")
                 # 调用 ensure_pdf 进行文档转换，保存上传的文件到临时目录
-                temp_file_path = os.path.join(temp_dir, sanitize_filename(file.filename))
+                temp_file_path = os.path.join(temp_dir, file.filename)
                 with open(temp_file_path, "wb") as tmp_f:
                     tmp_f.write(await file.read())
 
@@ -246,7 +246,7 @@ async def file_parse(
                 with open(convert_file_path, "rb") as f:
                     content = f.read()
                 shutil.rmtree(temp_dir, ignore_errors=True)
-            file_name = sanitize_filename(Path(file.filename).stem)  # 去掉扩展名
+            file_name = Path(file.filename).stem  # 去掉扩展名
             pdf_bytes_list.append(content)
             pdf_file_names.append(file_name)
         pdf_file_names_copy = copy.deepcopy(pdf_file_names)
@@ -286,7 +286,7 @@ async def file_parse(
             with zipfile.ZipFile(zip_path, "w", compression=zipfile.ZIP_DEFLATED) as zf:
                 for pdf_name in pdf_file_names_copy:
                     safe_pdf_name = sanitize_filename(pdf_name)
-                    parse_dir = resolve_parse_dir(unique_dir, safe_pdf_name, backend, parse_method)
+                    parse_dir = resolve_parse_dir(unique_dir, pdf_name, backend, parse_method)
 
                     if not os.path.exists(parse_dir):
                         continue
